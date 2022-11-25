@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"io"
 	"testing"
 
@@ -47,8 +46,7 @@ func TestParseMSG1(t *testing.T) {
 		return
 	}
 
-	out := msg.Format()
-	fmt.Println(out)
+	msg.Format().Output()
 }
 
 func TestParseEML1(t *testing.T) {
