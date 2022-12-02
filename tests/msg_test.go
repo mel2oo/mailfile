@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/mel2oo/mailfile"
+	"github.com/mel2oo/mailfile/msg"
 )
 
 func TestParseMsg(t *testing.T) {
-	msg, err := mailfile.New("testdata/complete.msg")
+	msg, err := msg.New("testdata/complete.msg")
 	if err != nil {
 		t.Fail()
 		return

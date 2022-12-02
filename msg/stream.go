@@ -1,4 +1,4 @@
-package msgfile
+package msg
 
 import (
 	"strings"
