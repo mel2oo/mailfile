@@ -7,10 +7,10 @@ import (
 )
 
 type MsOxMessage struct {
-	*Message
+	Message
 
-	Attachments []string
-	Recipients  []string
+	Recipients  []Recipient
+	Attachments []Attachment
 }
 
 func New(file string) (*MsOxMessage, error) {
@@ -37,6 +37,9 @@ func New(file string) (*MsOxMessage, error) {
 }
 
 func Extract(stream *Stream) *MsOxMessage {
-
-	return nil
+	return &MsOxMessage{
+		Message:     ParseProps(stream.props),
+		Recipients:  ParseRecipient(stream.recips),
+		Attachments: ParseAttachment(stream.attachs),
+	}
 }
