@@ -3,14 +3,13 @@ package msg
 import (
 	"os"
 
+	"github.com/mel2oo/mailfile"
 	"github.com/richardlehane/mscfb"
 )
 
 type MsOxMessage struct {
-	Message
-
-	Recipients  []Recipient
-	Attachments []Attachment
+	stream  *Stream
+	message *mailfile.Message
 }
 
 func New(file string) (*MsOxMessage, error) {
@@ -33,13 +32,17 @@ func New(file string) (*MsOxMessage, error) {
 	}
 
 	// MSOX-MSG stream data extract
-	return Extract(stream), nil
+	return &MsOxMessage{
+		stream:  stream,
+		message: Extract(stream),
+	}, nil
 }
 
-func Extract(stream *Stream) *MsOxMessage {
-	return &MsOxMessage{
-		Message:     ParseProps(stream.props),
-		Recipients:  ParseRecipient(stream.recips),
-		Attachments: ParseAttachment(stream.attachs),
-	}
+func Extract(stream *Stream) *mailfile.Message {
+	msg := &mailfile.Message{}
+
+	ParseProps(msg, stream.props)
+	ParseAttachment(msg, stream.attachs)
+
+	return msg
 }

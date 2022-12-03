@@ -7,22 +7,16 @@ import (
 	"github.com/richardlehane/mscfb"
 )
 
-type MetaData map[string]interface{}
-
 type Stream struct {
-	// origin
-	origin *msoxstream
-
 	// unpack
-	props   MetaData
-	subtag  []MetaData
-	recips  []MetaData
-	attachs []MetaData
+	UnpackData
+	// origin
+	origin msoxstream
 }
 
 func NewStream(doc *mscfb.Reader) (*Stream, error) {
 	stream := &Stream{
-		origin: &msoxstream{
+		origin: msoxstream{
 			props:   make([]*mscfb.File, 0),
 			subtag:  make(map[string]*msoxstream),
 			recips:  make(map[string]*msoxstream),
@@ -36,18 +30,7 @@ func NewStream(doc *mscfb.Reader) (*Stream, error) {
 		}
 	}
 
-	stream.props = stream.origin.Unpack()
-	for _, maps := range stream.origin.subtag {
-		stream.subtag = append(stream.subtag, maps.Unpack())
-	}
-
-	for _, maps := range stream.origin.recips {
-		stream.recips = append(stream.recips, maps.Unpack())
-	}
-
-	for _, maps := range stream.origin.attachs {
-		stream.attachs = append(stream.attachs, maps.Unpack())
-	}
+	stream.UnpackData = stream.origin.extract()
 
 	return stream, nil
 }
@@ -102,7 +85,39 @@ func (s *msoxstream) setEntry(keys []string, entry *mscfb.File) {
 	}
 }
 
-func (m *msoxstream) Unpack() MetaData {
+type MetaData map[string]interface{}
+
+type UnpackData struct {
+	props   MetaData
+	subtag  []UnpackData
+	recips  []UnpackData
+	attachs []UnpackData
+}
+
+func (m *msoxstream) extract() UnpackData {
+	up := UnpackData{
+		props:   m.unpack(),
+		subtag:  make([]UnpackData, 0),
+		recips:  make([]UnpackData, 0),
+		attachs: make([]UnpackData, 0),
+	}
+
+	for _, maps := range m.subtag {
+		up.subtag = append(up.subtag, maps.extract())
+	}
+
+	for _, maps := range m.recips {
+		up.recips = append(up.recips, maps.extract())
+	}
+
+	for _, maps := range m.attachs {
+		up.attachs = append(up.attachs, maps.extract())
+	}
+
+	return up
+}
+
+func (m *msoxstream) unpack() MetaData {
 	var (
 		metadata              = make(MetaData)
 		directory_name_filter = "__substg1.0_"
