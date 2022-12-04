@@ -8,8 +8,8 @@ import (
 )
 
 type MsOxMessage struct {
-	stream  *Stream
-	message *mailfile.Message
+	stream *Stream
+	*mailfile.Message
 }
 
 func New(file string) (*MsOxMessage, error) {
@@ -34,15 +34,15 @@ func New(file string) (*MsOxMessage, error) {
 	// MSOX-MSG stream data extract
 	return &MsOxMessage{
 		stream:  stream,
-		message: Extract(stream),
+		Message: Extract(stream.UnpackData),
 	}, nil
 }
 
-func Extract(stream *Stream) *mailfile.Message {
+func Extract(data UnpackData) *mailfile.Message {
 	msg := &mailfile.Message{}
 
-	ParseProps(msg, stream.props)
-	ParseAttachment(msg, stream.attachs)
+	ParseProps(msg, data.props)
+	ParseAttachment(msg, data.attachs)
 
 	return msg
 }

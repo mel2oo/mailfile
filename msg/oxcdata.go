@@ -178,7 +178,7 @@ func PtypString8(data []byte) string {
 // a string of Unicode characters in UTF-16LE format encoding with terminating null character (0x0000).
 func PtypString(data []byte) string {
 	if len(data) > 0 {
-		return UTF16ToUTF8(data[:len(data)-2])
+		return UTF16ToUTF8(data)
 	}
 	return string(data)
 }

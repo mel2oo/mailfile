@@ -11,29 +11,29 @@ import (
 func ParseProps(msg *mailfile.Message, m MetaData) {
 	header, ok := m["TransportMessageHeaders"].(string)
 	if ok {
-		msg.Handers = Headers(header)
+		msg.Headers = Headers(header)
 	}
 
 	msg.MessageID, _ = m["InternetMessageId"].(string)
 
 	msg.Date, ok = m["DeliverTime"].(string)
 	if !ok {
-		_, ok = msg.Handers["Date"]
+		_, ok = msg.Headers["Date"]
 		if ok {
-			msg.Date = msg.Handers["Date"][0]
+			msg.Date = msg.Headers["Date"][0]
 		}
 	}
 
 	msg.Subject, _ = m["Subject"].(string)
 
-	_, ok = msg.Handers["Sender"]
+	_, ok = msg.Headers["Sender"]
 	if ok {
-		msg.Sender = msg.Handers["Sender"][0]
+		msg.Sender = msg.Headers["Sender"][0]
 	}
 
-	_, ok = msg.Handers["From"]
+	_, ok = msg.Headers["From"]
 	if ok {
-		msg.From = msg.Handers["From"]
+		msg.From = msg.Headers["From"]
 	} else {
 		from, ok := m["SenderRepresentingSmtpAddress"].(string)
 		if ok {
@@ -41,9 +41,9 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 		}
 	}
 
-	_, ok = msg.Handers["Reply-To"]
+	_, ok = msg.Headers["Reply-To"]
 	if ok {
-		msg.ReplyTo = msg.Handers["Reply-To"]
+		msg.ReplyTo = msg.Headers["Reply-To"]
 	} else {
 		replyto, ok := m["ReplyRecipientNames"].(string)
 		if ok {
@@ -51,9 +51,9 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 		}
 	}
 
-	_, ok = msg.Handers["TO"]
+	_, ok = msg.Headers["TO"]
 	if ok {
-		msg.To = msg.Handers["TO"]
+		msg.To = msg.Headers["TO"]
 	} else {
 		to, ok := m["DisplayTo"].(string)
 		if !ok {
@@ -62,14 +62,14 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 		msg.To = []string{to}
 	}
 
-	_, ok = msg.Handers["CC"]
+	_, ok = msg.Headers["CC"]
 	if ok {
-		msg.Cc = msg.Handers["CC"]
+		msg.Cc = msg.Headers["CC"]
 	}
 
-	_, ok = msg.Handers["BCC"]
+	_, ok = msg.Headers["BCC"]
 	if ok {
-		msg.Bcc = msg.Handers["BCC"]
+		msg.Bcc = msg.Headers["BCC"]
 	}
 
 	msg.Body, _ = m["Body"].(string)
@@ -79,7 +79,7 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 		msg.Html = string(html)
 	}
 
-	ctxtype, ok1 := msg.Handers["Content-Type"]
+	ctxtype, ok1 := msg.Headers["Content-Type"]
 	ctxdata, ok2 := m["RtfCompressed"].([]uint8)
 	if ok1 && ok2 {
 		msg.ContentType = ctxtype[0]
@@ -97,16 +97,23 @@ func ParseAttachment(msg *mailfile.Message, datas []UnpackData) {
 		if ok {
 			ctxtype, _ := data.props["AttachMimeTag"].(string)
 			ctxdata, _ := data.props["AttachDataObject"].([]uint8)
-
-			if len(ctxdata) == 0 && len(data.subtag) > 0 {
-				ctxdata = data.subtag[0].props["RtfCompressed"].([]uint8)
+			if len(ctxdata) > 0 {
+				msg.Attachments = append(msg.Attachments, mailfile.Attachment{
+					Filename:    filename,
+					ContentType: ctxtype,
+					Data:        bytes.NewBuffer(ctxdata),
+				})
 			}
 
-			msg.Attachments = append(msg.Attachments, mailfile.Attachment{
-				Filename:    filename,
-				ContentType: ctxtype,
-				Data:        bytes.NewBuffer(ctxdata),
-			})
+			if len(data.subtag) > 0 {
+				for _, subdata := range data.subtag {
+					var msgfile mailfile.Message
+					ParseProps(&msgfile, subdata.props)
+					ParseAttachment(&msgfile, subdata.attachs)
+					msg.Child = append(msg.Child, msgfile)
+				}
+			}
+
 			continue
 		}
 
