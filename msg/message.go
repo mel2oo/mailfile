@@ -105,11 +105,14 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 		}
 	}
 
-	msg.Body, _ = m["Body"].(string)
+	body, ok := m["Body"].(string)
+	if ok {
+		msg.Body = bytes.NewBuffer([]byte(body))
+	}
 
 	html, ok := m["Html"].([]byte)
 	if ok {
-		msg.Html = string(html)
+		msg.Html = bytes.NewBuffer(html)
 	}
 
 	ctxtype, ok1 := msg.Headers["Content-Type"]
@@ -126,11 +129,15 @@ func ParseAttachment(msg *mailfile.Message, datas []UnpackData) {
 
 		filename, ok := data.props["AttachFilename"].(string)
 		if ok {
+			display, _ := data.props["DisplayName"].(string)
+			if len(display) == 0 {
+				display = filename
+			}
 			ctxtype, _ := data.props["AttachMimeTag"].(string)
 			ctxdata, _ := data.props["AttachDataObject"].([]uint8)
 			if len(ctxdata) > 0 {
 				msg.Attachments = append(msg.Attachments, mailfile.Attachment{
-					Filename:    filename,
+					Filename:    display,
 					ContentType: ctxtype,
 					Data:        bytes.NewBuffer(ctxdata),
 				})

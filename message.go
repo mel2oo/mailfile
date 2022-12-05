@@ -1,7 +1,9 @@
 package mailfile
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/mail"
 	"strings"
@@ -43,8 +45,8 @@ type Message struct {
 	ContentType string `json:"content-type"`
 
 	// 邮件正文内容
-	Body string `json:"body"`
-	Html string `json:"html"`
+	Body io.Reader `json:"-"`
+	Html io.Reader `json:"-"`
 
 	// 邮件正文中内嵌文件
 	Embeddeds []Embedded `json:"embedded"`
@@ -79,4 +81,13 @@ func GetSenderIP(headers mail.Header) (ip string, err error) {
 		return ip, errors.New("address not found")
 	}
 	return value[left+1 : right-1], nil
+}
+
+func (m *Message) Output() {
+	data, err := json.MarshalIndent(m, "", "  ")
+	if err != nil {
+		fmt.Println("message output error")
+	} else {
+		fmt.Println(string(data))
+	}
 }

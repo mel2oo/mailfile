@@ -243,7 +243,7 @@ func (m *Message) Format() *mailfile.Message {
 	}
 
 	if m.HasBody() {
-		msg.Body = string(m.Body)
+		msg.Body = bytes.NewBuffer(m.Body)
 	}
 
 	for index, part := range m.Parts {
@@ -257,9 +257,9 @@ func (m *Message) Format() *mailfile.Message {
 
 				switch mime {
 				case "text/plain":
-					msg.Body = string(partdata.Body)
+					msg.Body = bytes.NewBuffer(partdata.Body)
 				case "text/html":
-					msg.Html = string(partdata.Body)
+					msg.Html = bytes.NewBuffer(partdata.Body)
 				}
 			}
 			continue
