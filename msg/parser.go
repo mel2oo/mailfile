@@ -7,12 +7,7 @@ import (
 	"github.com/richardlehane/mscfb"
 )
 
-type MsOxMessage struct {
-	stream *Stream
-	*mailfile.Message
-}
-
-func New(file string) (*MsOxMessage, error) {
+func New(file string) (*Stream, error) {
 	f, err := os.Open(file)
 	if err != nil {
 		return nil, err
@@ -26,23 +21,14 @@ func New(file string) (*MsOxMessage, error) {
 	}
 
 	// MSOX-MSG file stream reader
-	stream, err := NewStream(doc)
-	if err != nil {
-		return nil, err
-	}
-
-	// MSOX-MSG stream data extract
-	return &MsOxMessage{
-		stream:  stream,
-		Message: Extract(stream.UnpackData),
-	}, nil
+	return NewStream(doc)
 }
 
-func Extract(data UnpackData) *mailfile.Message {
+func (s *Stream) Format() *mailfile.Message {
 	msg := &mailfile.Message{}
 
-	ParseProps(msg, data.props)
-	ParseAttachment(msg, data.attachs)
+	ParseProps(msg, s.UnpackData.props)
+	ParseAttachment(msg, s.UnpackData.attachs)
 
 	return msg
 }

@@ -9,12 +9,16 @@ import (
 )
 
 func ParseProps(msg *mailfile.Message, m MetaData) {
-	header, ok := m["TransportMessageHeaders"].(string)
-	if ok {
+	var ok bool
+
+	if header, ok := m["TransportMessageHeaders"].(string); ok {
 		msg.Headers = Headers(header)
+		msg.SenderAddress, _ = mailfile.GetSenderIP(msg.Headers)
 	}
 
-	msg.MessageID, _ = m["InternetMessageId"].(string)
+	if msgid, ok := m["InternetMessageId"].(string); ok {
+		msg.MessageID = msgid
+	}
 
 	msg.Date, ok = m["DeliverTime"].(string)
 	if !ok {

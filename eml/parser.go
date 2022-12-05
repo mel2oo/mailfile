@@ -4,14 +4,27 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/base64"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"mime"
 	"mime/multipart"
 	"mime/quotedprintable"
 	"net/mail"
+	"os"
 	"strings"
+
+	"github.com/mel2oo/mailfile"
 )
+
+func New(file string) (*Message, error) {
+	fi, err := os.Open(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return ParseMessage(fi)
+}
 
 // ParseMessage parses and returns a Message from an io.Reader
 // containing the raw text of an email message.
@@ -193,4 +206,89 @@ func decodeRFC2047(s string) string {
 		return s
 	}
 	return decoded
+}
+
+func (m *Message) Format() *mailfile.Message {
+	var msg mailfile.Message
+	msg.Headers = mail.Header(m.Header)
+	msg.MessageID = m.Header.Get("Message-Id")
+	msg.Date = m.Header.Get("Date")
+	msg.Subject = m.Header.Subject()
+	msg.ContentType = m.Header.Get("Content-Type")
+
+	msg.SenderAddress, _ = mailfile.GetSenderIP(msg.Headers)
+	msg.Sender, _ = mail.ParseAddress(m.Header.Get("Sender"))
+	msg.From, _ = mail.ParseAddressList(m.Header.From())
+	msg.ReplyTo, _ = mail.ParseAddressList(m.Header.Get("Reply-To"))
+
+	for _, tstr := range m.Header.To() {
+		to, err := mail.ParseAddress(tstr)
+		if err == nil {
+			msg.To = append(msg.To, to)
+		}
+	}
+
+	for _, cstr := range m.Header.Cc() {
+		cc, err := mail.ParseAddress(cstr)
+		if err == nil {
+			msg.Cc = append(msg.Cc, cc)
+		}
+	}
+
+	for _, cstr := range m.Header.Bcc() {
+		bcc, err := mail.ParseAddress(cstr)
+		if err == nil {
+			msg.Bcc = append(msg.Bcc, bcc)
+		}
+	}
+
+	if m.HasBody() {
+		msg.Body = string(m.Body)
+	}
+
+	for index, part := range m.Parts {
+		str, desc, err := part.Header.ContentDisposition()
+		if err != nil {
+			for _, partdata := range part.Parts {
+				mime, _, err := partdata.Header.ContentType()
+				if err != nil {
+					continue
+				}
+
+				switch mime {
+				case "text/plain":
+					msg.Body = string(partdata.Body)
+				case "text/html":
+					msg.Html = string(partdata.Body)
+				}
+			}
+			continue
+		}
+
+		if str == "attachment" {
+			name, ok := desc["filename"]
+			if !ok {
+				name = fmt.Sprintf("%s_%d", str, index)
+			}
+
+			msg.Attachments = append(msg.Attachments, mailfile.Attachment{
+				Filename:    name,
+				ContentType: part.Header.Get("Content-Type"),
+				Data:        bytes.NewBuffer(part.Body),
+			})
+		} else {
+			cid, ok := desc["CID"]
+			if !ok {
+				cid = fmt.Sprintf("%s_%d", str, index)
+			}
+
+			msg.Embeddeds = append(msg.Embeddeds, mailfile.Embedded{
+				CID:         cid,
+				ContentType: part.Header.Get("Content-Type"),
+				Data:        bytes.NewBuffer(part.Body),
+			})
+		}
+	}
+
+	return &msg
 }
