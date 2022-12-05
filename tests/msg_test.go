@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/mel2oo/mailfile/eml"
@@ -37,18 +38,19 @@ func TestParseSenderIP(t *testing.T) {
 	out.Output()
 }
 
-func TestParseMSG(t *testing.T) {
+func TestParseMSG1(t *testing.T) {
 	msg, err := msg.New("testdata/549970122456a12d8290cea3dd9c960f.msg")
 	if err != nil {
 		t.Fail()
 		return
 	}
 
-	msg.Format().Output()
+	out := msg.Format()
+	fmt.Println(out)
 }
 
-func TestParseEML(t *testing.T) {
-	msg, err := eml.New("testdata/d0db5d24-c976-bd8f-c272-1b3f150ac1f2.eml")
+func TestParseEML1(t *testing.T) {
+	msg, err := eml.New("testdata/6eabf11e48dbd66d451bdc03fc0d4913.eml")
 	if err != nil {
 		t.Fail()
 		return
