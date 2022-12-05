@@ -26,50 +26,79 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 
 	msg.Subject, _ = m["Subject"].(string)
 
-	_, ok = msg.Headers["Sender"]
-	if ok {
-		msg.Sender = msg.Headers["Sender"][0]
-	}
-
 	_, ok = msg.Headers["From"]
 	if ok {
-		msg.From = msg.Headers["From"]
+		for _, str1 := range msg.Headers["From"] {
+			addrs, err := mail.ParseAddressList(str1)
+			if err == nil {
+				msg.From = append(msg.From, addrs...)
+			}
+		}
 	} else {
-		from, ok := m["SenderRepresentingSmtpAddress"].(string)
+		fromlist, ok := m["SenderRepresentingSmtpAddress"].(string)
 		if ok {
-			msg.From = []string{from}
+			msg.From, _ = mail.ParseAddressList(fromlist)
+		}
+	}
+
+	_, ok = msg.Headers["Sender"]
+	if ok {
+		msg.Sender, _ = mail.ParseAddress(msg.Headers["Sender"][0])
+	} else {
+		if len(msg.From) > 0 {
+			msg.Sender = msg.From[0]
 		}
 	}
 
 	_, ok = msg.Headers["Reply-To"]
 	if ok {
-		msg.ReplyTo = msg.Headers["Reply-To"]
+		for _, str1 := range msg.Headers["Reply-To"] {
+			addrs, err := mail.ParseAddressList(str1)
+			if err == nil {
+				msg.ReplyTo = append(msg.ReplyTo, addrs...)
+			}
+		}
 	} else {
-		replyto, ok := m["ReplyRecipientNames"].(string)
+		replytolist, ok := m["ReplyRecipientNames"].(string)
 		if ok {
-			msg.ReplyTo = []string{replyto}
+			msg.ReplyTo, _ = mail.ParseAddressList(replytolist)
 		}
 	}
 
-	_, ok = msg.Headers["TO"]
-	if ok {
-		msg.To = msg.Headers["TO"]
-	} else {
-		to, ok := m["DisplayTo"].(string)
-		if !ok {
-			to, _ = m["ReceivedRepresentingSmtpAddress"].(string)
+	to1, ok1 := msg.Headers["To"]
+	to2, ok2 := msg.Headers["DisplayTo"]
+	if ok1 || ok2 {
+		for _, str1 := range append(to1, to2...) {
+			addrs, err := mail.ParseAddressList(str1)
+			if err == nil {
+				msg.To = append(msg.To, addrs...)
+			}
 		}
-		msg.To = []string{to}
+	} else {
+		tolist, ok := m["ReceivedRepresentingSmtpAddress"].(string)
+		if ok {
+			msg.To, _ = mail.ParseAddressList(tolist)
+		}
 	}
 
 	_, ok = msg.Headers["CC"]
 	if ok {
-		msg.Cc = msg.Headers["CC"]
+		for _, str1 := range msg.Headers["CC"] {
+			addrs, err := mail.ParseAddressList(str1)
+			if err == nil {
+				msg.Cc = append(msg.Cc, addrs...)
+			}
+		}
 	}
 
 	_, ok = msg.Headers["BCC"]
 	if ok {
-		msg.Bcc = msg.Headers["BCC"]
+		for _, str1 := range msg.Headers["BCC"] {
+			addrs, err := mail.ParseAddressList(str1)
+			if err == nil {
+				msg.Bcc = append(msg.Bcc, addrs...)
+			}
+		}
 	}
 
 	msg.Body, _ = m["Body"].(string)
@@ -80,10 +109,8 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 	}
 
 	ctxtype, ok1 := msg.Headers["Content-Type"]
-	ctxdata, ok2 := m["RtfCompressed"].([]uint8)
-	if ok1 && ok2 {
+	if ok1 {
 		msg.ContentType = ctxtype[0]
-		msg.Content = bytes.NewBuffer(ctxdata)
 	}
 }
 
@@ -110,7 +137,7 @@ func ParseAttachment(msg *mailfile.Message, datas []UnpackData) {
 					var msgfile mailfile.Message
 					ParseProps(&msgfile, subdata.props)
 					ParseAttachment(&msgfile, subdata.attachs)
-					msg.Child = append(msg.Child, msgfile)
+					msg.SubMessage = append(msg.SubMessage, msgfile)
 				}
 			}
 

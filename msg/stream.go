@@ -1,8 +1,6 @@
 package msg
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"io"
 	"strings"
 
@@ -35,12 +33,6 @@ func NewStream(doc *mscfb.Reader) (*Stream, error) {
 	stream.UnpackData = stream.origin.extract()
 
 	return stream, nil
-}
-
-func GetMD5(b []byte) string {
-	h := md5.New()
-	h.Write(b)
-	return hex.EncodeToString(h.Sum(nil))
 }
 
 type msoxstream struct {
