@@ -2,6 +2,7 @@ package msg
 
 import (
 	"bytes"
+	"io"
 	"net/mail"
 	"strings"
 
@@ -107,12 +108,12 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 
 	body, ok := m["Body"].(string)
 	if ok {
-		msg.Body = bytes.NewBuffer([]byte(body))
+		msg.Body = []io.Reader{bytes.NewBuffer([]byte(body))}
 	}
 
 	html, ok := m["Html"].([]byte)
 	if ok {
-		msg.Html = bytes.NewBuffer(html)
+		msg.Html = []io.Reader{bytes.NewBuffer(html)}
 	}
 
 	ctxtype, ok1 := msg.Headers["Content-Type"]
