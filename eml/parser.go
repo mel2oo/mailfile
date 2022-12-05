@@ -213,7 +213,7 @@ func (m *Message) Format() *mailfile.Message {
 	msg.Headers = mail.Header(m.Header)
 	msg.MessageID = m.Header.Get("Message-Id")
 	msg.Date = m.Header.Get("Date")
-	msg.Subject = m.Header.Subject()
+	msg.Subject = mailfile.ParseTitle(m.Header.Subject())
 	msg.ContentType = m.Header.Get("Content-Type")
 
 	msg.SenderAddress, _ = mailfile.GetSenderIP(msg.Headers)
@@ -242,52 +242,63 @@ func (m *Message) Format() *mailfile.Message {
 		}
 	}
 
-	if m.HasBody() {
-		msg.Body = bytes.NewBuffer(m.Body)
-	}
-
 	for index, part := range m.Parts {
-		str, desc, err := part.Header.ContentDisposition()
-		if err != nil {
-			for _, partdata := range part.Parts {
-				mime, _, err := partdata.Header.ContentType()
-				if err != nil {
-					continue
-				}
-
+		if part.HasBody() {
+			mime, _, err := part.Header.ContentType()
+			if err == nil {
 				switch mime {
 				case "text/plain":
-					msg.Body = bytes.NewBuffer(partdata.Body)
+					msg.Body = bytes.NewBuffer(part.Body)
 				case "text/html":
-					msg.Html = bytes.NewBuffer(partdata.Body)
+					msg.Html = bytes.NewBuffer(part.Body)
 				}
 			}
+		}
+
+		if part.SubMessage != nil {
+			msg.SubMessage = append(msg.SubMessage, part.SubMessage.Format())
 			continue
 		}
 
-		if str == "attachment" {
+		str, desc, err := part.Header.ContentDisposition()
+		if err == nil {
 			name, ok := desc["filename"]
 			if !ok {
 				name = fmt.Sprintf("%s_%d", str, index)
 			}
 
 			msg.Attachments = append(msg.Attachments, mailfile.Attachment{
-				Filename:    name,
+				Filename:    mailfile.ParseContext(name),
 				ContentType: part.Header.Get("Content-Type"),
 				Data:        bytes.NewBuffer(part.Body),
 			})
-		} else {
-			cid, ok := desc["CID"]
-			if !ok {
-				cid = fmt.Sprintf("%s_%d", str, index)
+			continue
+		}
+
+		for _, partdata := range part.Parts {
+			mime, _, err := partdata.Header.ContentType()
+			if err != nil {
+				continue
 			}
 
-			msg.Embeddeds = append(msg.Embeddeds, mailfile.Embedded{
-				CID:         cid,
-				ContentType: part.Header.Get("Content-Type"),
-				Data:        bytes.NewBuffer(part.Body),
-			})
+			ctxid := partdata.Header.Get("Content-Id")
+			if len(ctxid) > 0 {
+				msg.Embeddeds = append(msg.Embeddeds, mailfile.Embedded{
+					CID:         mailfile.ParseContext(ctxid),
+					ContentType: partdata.Header.Get("Content-Type"),
+					Data:        bytes.NewBuffer(partdata.Body),
+				})
+				continue
+			}
+
+			switch mime {
+			case "text/plain":
+				msg.Body = bytes.NewBuffer(partdata.Body)
+			case "text/html":
+				msg.Html = bytes.NewBuffer(partdata.Body)
+			}
 		}
+		continue
 	}
 
 	return &msg

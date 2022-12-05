@@ -1,6 +1,7 @@
 package mailfile
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -53,19 +54,19 @@ type Message struct {
 	// 邮件附件
 	Attachments []Attachment `json:"attachment"`
 	// 邮件附件，子邮件类型
-	SubMessage []Message `json:"sub-message"`
+	SubMessage []*Message `json:"sub-message"`
 }
 
 type Attachment struct {
-	Filename    string `json:"filename"`
-	ContentType string `json:"content-type"`
-	Data        io.Reader
+	Filename    string    `json:"filename"`
+	ContentType string    `json:"content-type"`
+	Data        io.Reader `json:"-"`
 }
 
 type Embedded struct {
-	CID         string `json:"cid"`
-	ContentType string `json:"content-type"`
-	Data        io.Reader
+	CID         string    `json:"cid"`
+	ContentType string    `json:"content-type"`
+	Data        io.Reader `json:"-"`
 }
 
 func GetSenderIP(headers mail.Header) (ip string, err error) {
@@ -84,10 +85,12 @@ func GetSenderIP(headers mail.Header) (ip string, err error) {
 }
 
 func (m *Message) Output() {
-	data, err := json.MarshalIndent(m, "", "  ")
-	if err != nil {
+	data := bytes.NewBuffer([]byte{})
+	encoder := json.NewEncoder(data)
+	encoder.SetEscapeHTML(false)
+	if err := encoder.Encode(m); err != nil {
 		fmt.Println("message output error")
 	} else {
-		fmt.Println(string(data))
+		fmt.Println(data.String())
 	}
 }

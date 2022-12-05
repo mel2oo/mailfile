@@ -1,0 +1,216 @@
+Received: from PH8PR12MB6675.namprd12.prod.outlook.com (2603:10b6:510:1c2::15)
+ by BN9PR12MB5180.namprd12.prod.outlook.com with HTTPS; Fri, 28 Oct 2022
+ 19:22:52 +0000
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=sbpsb.org;
+Received: from BN9PR12MB5180.namprd12.prod.outlook.com (2603:10b6:408:11d::22)
+ by PH8PR12MB6675.namprd12.prod.outlook.com (2603:10b6:510:1c2::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.28; Fri, 28 Oct
+ 2022 19:22:50 +0000
+Received: from BN9PR12MB5180.namprd12.prod.outlook.com
+ ([fe80::eacb:7acb:37fe:bfd]) by BN9PR12MB5180.namprd12.prod.outlook.com
+ ([fe80::eacb:7acb:37fe:bfd%9]) with mapi id 15.20.5769.015; Fri, 28 Oct 2022
+ 19:22:50 +0000
+From: "Watson, Kelli" <Kelli.Watson@sbpsb.org>
+To: "Watson, Kelli" <Kelli.Watson@sbpsb.org>
+Subject: St. Bernard Parish School District - 10/28/22. . 
+Thread-Topic: St. Bernard Parish School District - 10/28/22. . 
+Thread-Index: AQHY6wKroLsq6FyTv0qUHO552b/0EQ==
+Date: Fri, 28 Oct 2022 19:22:49 +0000
+Message-ID: <70307D0D-C9DA-492D-94A7-5EE12D8BE5F6@sbpsb.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator: <70307D0D-C9DA-492D-94A7-5EE12D8BE5F6@sbpsb.org>
+user-agent: Microsoft-MacOutlook/16.60.22041000
+X-MS-Exchange-Organization-MessageDirectionality: Originating
+X-MS-Exchange-Organization-AuthSource: BN9PR12MB5180.namprd12.prod.outlook.com
+X-MS-Exchange-Organization-AuthAs: Internal
+X-MS-Exchange-Organization-AuthMechanism: 04
+X-MS-Exchange-Organization-Network-Message-Id:
+ 943dbc53-fe68-4a5a-b121-08dab919cda4
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5180:EE_|PH8PR12MB6675:EE_
+Return-Path: Kelli.Watson@sbpsb.org
+X-MS-Exchange-Organization-ExpirationStartTime: 28 Oct 2022 19:22:50.6001
+ (UTC)
+X-MS-Exchange-Organization-ExpirationStartTimeReason: OriginalSubmit
+X-MS-Exchange-Organization-ExpirationInterval: 1:00:00:00.0000000
+X-MS-Exchange-Organization-ExpirationIntervalReason: OriginalSubmit
+X-MS-Office365-Filtering-Correlation-Id: 943dbc53-fe68-4a5a-b121-08dab919cda4
+X-Microsoft-Antispam: BCL:0;
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:-1;SRV:;IPV:NLI;SFV:SKI;H:BN9PR12MB5180.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:;DIR:INB;
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2022 19:22:50.1321
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 6a1184e9-4546-437d-80ca-9bd870e88d37
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5180.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-Network-Message-Id: 943dbc53-fe68-4a5a-b121-08dab919cda4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +k/pITHJUKSw1OozW13MiASqasCM3dMeR0dXVjXvaIfDxeLTvifl1WW5LXqlcG29gq6/6Vj078eLNRmSXMsoww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6675
+X-MS-Exchange-Transport-EndToEndLatency: 00:00:02.7184723
+X-MS-Exchange-Processed-By-BccFoldering: 15.20.5769.015
+X-Microsoft-Antispam-Mailbox-Delivery:
+ ucf:1;jmr:0;auth:0;dest:D;OFR:CustomRules;ENG:(910001)(944506478)(944626604)(920097)(425001)(930097);
+X-Microsoft-Antispam-Message-Info:
+ cVQIJnyfxc74DFy989+KE+xpVSjrc7vKgx/EpTs71wrZXHJTmbRJinyaT8uK6io6yOCXGQp1/EBTL4v3Z9aafCy6Q8zTiP6B0Xtl+lwJPWrlFNceKXIVeOmqyN1MOyWStf9WFsiVnytyhB6A4ig+qz8eCXkDPWh5MWUURM6LLWh019qi+CiDq5VDM/sVia3U2cS5RtHEYaFhAicjBo3C2mIh8gHrhRy3oHc+CGeAlMkEjlj86tc9cFRNSIEUAFtzBdYzwKDHsvw4Dp15t8rz3t454ahhxw9kMa81bYmx3aPkKIZhBMSiDR8pMvmDwvaTIRG9Fd5rtld7PB/RuMh2tgJZ0p1hrnP7dYUJwzqjFuAmncR+9MwIsBaG/vLIinxvHyAmUMf26wQKB5iA8s2hbyDbJgeaeP7sRShi1Dt347m5S1MzbgBOrjuXLCs8aqoGwavavsh8fc3AWYmnQyrcPvJa9BLyDPfxcQMnfvBQFfmp6eSj5hsV7l/tBeEYSekvmjTodKvNXNJuAzRWUrOFMvyuCi2U4X1U02kSY4H8r1ahJSB9MEXTScs9Cv4QVJwUMh0w4AxBiJaiD/6y9PCTyhrX+5dYYiLtsl0BBoNRORh0mJW++7+k3yl8xvzjZdPoDb5iQfD9RlDxFKpluK92u/Vi93NRAL7iDj/nUN+RCv3S4+7TsZR+Biqnfz9X3fnGZ0DNZG39IZsRd7Lu/eq2jivymGVHrquz4qR6go1ga0jJ4o7AMbPIeWKYI0mXRuRiXmKbPxHVUiqMRMgdmmnZGiDGx9zkdgNZiicjqDjFiFjPSGBcBqJOGA2I1gX/vkPA7rLjNG+E+/eNuB/+BFU7KfGYtFlFL0PUQ8IklFyHfozqAueRtoP+uYEQqouK/UrIXoLYk02f0JJLS7yHN8K7Cw==
+Content-type: multipart/alternative;
+	boundary="B_3749809383_1923605198"
+MIME-Version: 1.0
+
+--B_3749809383_1923605198
+Content-type: text/plain;
+	charset="UTF-8"
+Content-transfer-encoding: 7bit
+
+You recently received a (2) secure message from Kelli Watson.
+Use the button below to open your message and authenticate to access.
+
+Yes, Open messageNo, Don't
+
+This message will just take about 5 seconds to complete and will expire in 14days.
+
+We look forward to hearing from you,
+
+ 
+
+Kelli Watson
+
+Assistant Principal
+
+Chalmette High School
+
+1100 E. Judge Perez Drive
+
+Chalmette, LA 70043
+
+Phone: (504)301-2600
+
+Fax: (504)301-2610
+
+ 
+
+ 
+
+
+--B_3749809383_1923605198
+Content-type: text/html;
+	charset="UTF-8"
+Content-transfer-encoding: quoted-printable
+
+<html xmlns:o=3D"urn:schemas-microsoft-com:office:office" xmlns:w=3D"urn:sc=
+hemas-microsoft-com:office:word" xmlns:m=3D"http://schemas.microsoft.com/of=
+fice/2004/12/omml" xmlns=3D"http://www.w3.org/TR/REC-html40"><head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8"><m=
+eta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)"><sty=
+le><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Roboto;
+	panose-1:2 0 0 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:"Lucida Handwriting";
+	panose-1:3 1 1 1 1 1 1 1 1 1;}
+@font-face
+	{font-family:"Book Antiqua";
+	panose-1:2 4 6 2 5 3 5 3 3 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Calibri",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-family:"Calibri",sans-serif;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+	{page:WordSection1;}
+--></style></head><body lang=3D"EN-US" link=3D"#0563C1" vlink=3D"#954F72" s=
+tyle=3D"word-wrap:break-word"><div class=3D"WordSection1"><table class=3D"M=
+soNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" width=3D"10=
+0%" style=3D"width:100.0%;background:white"><tbody><tr><td style=3D"padding=
+:0in 0in 0in 0in"><p class=3D"MsoNormal"><span style=3D"font-size:10.5pt;fo=
+nt-family:&quot;Arial&quot;,sans-serif;color:black;border:none windowtext 1=
+.0pt;padding:0in">You recently received a&nbsp;<b>(2)</b>&nbsp;secure&nbsp;=
+message from <b>Kelli Watson</b>.<br>Use the button below to open your mess=
+age and authenticate to access.<br><br></span><o:p></o:p></p></td></tr><tr>=
+<td style=3D"padding:0in 30.0pt 0in 30.0pt;border-radius: 11px"><div align=
+=3D"center"><table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" =
+cellpadding=3D"0" width=3D"100%" style=3D"width:100.0%"><tbody><tr><td styl=
+e=3D"padding:0in 0in 0in 0in;font-style:inherit;font-variant:inherit;font-s=
+tretch: inherit;line-height:inherit;text-decoration-line: none"><div align=
+=3D"center"><table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"5" =
+cellpadding=3D"0" width=3D"70%" style=3D"width:70.0%"><tbody><tr><td width=
+=3D"50%" style=3D"width:50.0%;border:solid #0B4791 1.0pt;background:#0B4791=
+;padding:4.5pt 4.5pt 4.5pt 4.5pt"><p class=3D"MsoNormal" align=3D"center" s=
+tyle=3D"text-align:center"><span style=3D"font-family:Roboto;color:black"><=
+a href=3D"https://www.evernote.com/shard/s451/sh/b0d6bf59-2a51-cebc-44bc-61=
+706524f778/a8d99e74304198ca045497db1da16ceb" target=3D"_blank"><b><span sty=
+le=3D"font-size:10.0pt;font-family:&quot;Arial&quot;,sans-serif;color:white=
+;border:none windowtext 1.0pt;padding:0in;text-decoration:none">Yes, Open m=
+essage</span></b></a></span><span style=3D"font-family:Roboto"><o:p></o:p><=
+/span></p></td><td width=3D"50%" style=3D"width:50.0%;border:solid #0B4791 =
+1.0pt;background:#0B4791;padding:4.5pt 4.5pt 4.5pt 4.5pt;border-radius: 11p=
+x"><p class=3D"MsoNormal" align=3D"center" style=3D"text-align:center"><spa=
+n style=3D"font-family:Roboto;color:black"><a href=3D"https://www.evernote.=
+com/shard/s451/sh/b0d6bf59-2a51-cebc-44bc-61706524f778/a8d99e74304198ca0454=
+97db1da16ceb" target=3D"_blank"><b><span style=3D"font-size:10.0pt;font-fam=
+ily:&quot;Arial&quot;,sans-serif;color:white;border:none windowtext 1.0pt;p=
+adding:0in;text-decoration:none">No, Don't</span></b></a></span><span style=
+=3D"font-family:Roboto"><o:p></o:p></span></p></td></tr></tbody></table></d=
+iv></td></tr></tbody></table></div></td></tr></tbody></table><p class=3D"Ms=
+oNormal"><span style=3D"font-size:11.5pt;font-family:&quot;Arial&quot;,sans=
+-serif;color:#201F1E"><br></span><span style=3D"font-size:10.5pt;font-famil=
+y:&quot;Arial&quot;,sans-serif;color:black;border:none windowtext 1.0pt;pad=
+ding:0in;background:white">This message will just take about 5 seconds to c=
+omplete and will expire in 14days.<br><br>We look forward to hearing from y=
+ou,<o:p></o:p></span></p><p class=3D"MsoNormal"><span style=3D"font-size:10=
+.5pt;font-family:&quot;Arial&quot;,sans-serif;color:black;border:none windo=
+wtext 1.0pt;padding:0in;background:white"><o:p>&nbsp;</o:p></span></p><p cl=
+ass=3D"MsoNormal"><b><span style=3D"font-family:&quot;Lucida Handwriting&qu=
+ot;;color:#7030A0">Kelli Watson</span></b><span style=3D"font-size:12.0pt;f=
+ont-family:&quot;Times New Roman&quot;,serif;color:black"><o:p></o:p></span=
+></p><p class=3D"MsoNormal"><b><span style=3D"font-family:&quot;Book Antiqu=
+a&quot;,serif;color:#7030A0">Assistant Principal</span></b><span style=3D"f=
+ont-size:12.0pt;font-family:&quot;Times New Roman&quot;,serif;color:black">=
+<o:p></o:p></span></p><p class=3D"MsoNormal"><span style=3D"font-family:&qu=
+ot;Book Antiqua&quot;,serif;color:#7030A0">Chalmette High School</span><spa=
+n style=3D"font-size:12.0pt;font-family:&quot;Times New Roman&quot;,serif;c=
+olor:black"><o:p></o:p></span></p><p class=3D"MsoNormal"><span style=3D"fon=
+t-family:&quot;Book Antiqua&quot;,serif;color:#7030A0">1100 E. Judge Perez =
+Drive</span><span style=3D"font-size:12.0pt;font-family:&quot;Times New Rom=
+an&quot;,serif;color:black"><o:p></o:p></span></p><p class=3D"MsoNormal"><s=
+pan style=3D"font-family:&quot;Book Antiqua&quot;,serif;color:#7030A0">Chal=
+mette, LA 70043</span><span style=3D"font-size:12.0pt;font-family:&quot;Tim=
+es New Roman&quot;,serif;color:black"><o:p></o:p></span></p><p class=3D"Mso=
+Normal"><span style=3D"font-family:&quot;Book Antiqua&quot;,serif;color:#70=
+30A0">Phone: (504)301-2600</span><span style=3D"font-size:12.0pt;font-famil=
+y:&quot;Times New Roman&quot;,serif;color:black"><o:p></o:p></span></p><p c=
+lass=3D"MsoNormal"><span style=3D"font-family:&quot;Book Antiqua&quot;,seri=
+f;color:#7030A0">Fax: (504)301-2610</span><span style=3D"font-size:12.0pt;f=
+ont-family:&quot;Times New Roman&quot;,serif;color:black"><o:p></o:p></span=
+></p><p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p><p class=3D"MsoNormal"><o:=
+p>&nbsp;</o:p></p></div></body></html>
+
+--B_3749809383_1923605198--

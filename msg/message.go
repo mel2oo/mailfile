@@ -127,34 +127,6 @@ func ParseRecipient(msg *mailfile.Message, datas []UnpackData) {
 func ParseAttachment(msg *mailfile.Message, datas []UnpackData) {
 	for _, data := range datas {
 
-		filename, ok := data.props["AttachFilename"].(string)
-		if ok {
-			display, _ := data.props["DisplayName"].(string)
-			if len(display) == 0 {
-				display = filename
-			}
-			ctxtype, _ := data.props["AttachMimeTag"].(string)
-			ctxdata, _ := data.props["AttachDataObject"].([]uint8)
-			if len(ctxdata) > 0 {
-				msg.Attachments = append(msg.Attachments, mailfile.Attachment{
-					Filename:    display,
-					ContentType: ctxtype,
-					Data:        bytes.NewBuffer(ctxdata),
-				})
-			}
-
-			if len(data.subtag) > 0 {
-				for _, subdata := range data.subtag {
-					var msgfile mailfile.Message
-					ParseProps(&msgfile, subdata.props)
-					ParseAttachment(&msgfile, subdata.attachs)
-					msg.SubMessage = append(msg.SubMessage, msgfile)
-				}
-			}
-
-			continue
-		}
-
 		cid, ok := data.props["AttachContentId"].(string)
 		if ok {
 			ctxtype, _ := data.props["AttachMimeTag"].(string)
@@ -165,8 +137,35 @@ func ParseAttachment(msg *mailfile.Message, datas []UnpackData) {
 				ContentType: ctxtype,
 				Data:        bytes.NewBuffer(ctxdata),
 			})
+			continue
 		}
+
+		display, _ := data.props["DisplayName"].(string)
+		if len(display) == 0 {
+			display = data.props["AttachFilename"].(string)
+		}
+		ctxtype, _ := data.props["AttachMimeTag"].(string)
+		ctxdata, _ := data.props["AttachDataObject"].([]uint8)
+		if len(ctxdata) > 0 {
+			msg.Attachments = append(msg.Attachments, mailfile.Attachment{
+				Filename:    display,
+				ContentType: ctxtype,
+				Data:        bytes.NewBuffer(ctxdata),
+			})
+		}
+
+		if len(data.subtag) > 0 {
+			for _, subdata := range data.subtag {
+				var msgfile mailfile.Message
+				ParseProps(&msgfile, subdata.props)
+				ParseAttachment(&msgfile, subdata.attachs)
+				msg.SubMessage = append(msg.SubMessage, &msgfile)
+			}
+		}
+
+		continue
 	}
+
 }
 
 func Headers(hstr string) mail.Header {
@@ -174,9 +173,15 @@ func Headers(hstr string) mail.Header {
 		headers = make(mail.Header)
 		key     string
 		val     string
+		list    []string
 	)
 
-	list := strings.Split(hstr, "\r\n")
+	if strings.Contains(hstr, "\r\n") {
+		list = strings.Split(hstr, "\r\n")
+	} else {
+		list = strings.Split(hstr, "\n")
+	}
+
 	for _, s := range list {
 		if strings.Contains(s, ": ") {
 			index := strings.Index(s, ": ")
