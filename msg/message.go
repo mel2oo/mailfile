@@ -121,40 +121,31 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 	}
 }
 
-func ParseRecipient(msg *mailfile.Message, datas []UnpackData) {
-}
-
 func ParseAttachment(msg *mailfile.Message, datas []UnpackData) {
 	for _, data := range datas {
 
-		cid, ok := data.props["AttachContentId"].(string)
-		if ok {
-			ctxtype, _ := data.props["AttachMimeTag"].(string)
-			ctxdata, _ := data.props["AttachDataObject"].([]uint8)
-
-			msg.Embeddeds = append(msg.Embeddeds, mailfile.Embedded{
-				CID:         cid,
-				ContentType: ctxtype,
-				Data:        bytes.NewBuffer(ctxdata),
-			})
-			continue
-		}
-
+		ctxdata, _ := data.props["AttachDataObject"].([]uint8)
+		ctxtype, _ := data.props["AttachMimeTag"].(string)
+		ctxname, _ := data.props["AttachFilename"].(string)
 		display, _ := data.props["DisplayName"].(string)
+		ctxcid, _ := data.props["AttachContentId"].(string)
 		if len(display) == 0 {
 			display = data.props["AttachFilename"].(string)
 		}
-		ctxtype, _ := data.props["AttachMimeTag"].(string)
-		ctxdata, _ := data.props["AttachDataObject"].([]uint8)
-		if len(ctxdata) > 0 {
+
+		if len(ctxname) > 0 {
 			msg.Attachments = append(msg.Attachments, mailfile.Attachment{
 				Filename:    display,
 				ContentType: ctxtype,
 				Data:        bytes.NewBuffer(ctxdata),
 			})
-		}
-
-		if len(data.subtag) > 0 {
+		} else if len(ctxcid) > 0 {
+			msg.Embeddeds = append(msg.Embeddeds, mailfile.Embedded{
+				CID:         ctxcid,
+				ContentType: ctxtype,
+				Data:        bytes.NewBuffer(ctxdata),
+			})
+		} else if len(data.subtag) > 0 {
 			for _, subdata := range data.subtag {
 				var msgfile mailfile.Message
 				ParseProps(&msgfile, subdata.props)
@@ -162,10 +153,7 @@ func ParseAttachment(msg *mailfile.Message, datas []UnpackData) {
 				msg.SubMessage = append(msg.SubMessage, &msgfile)
 			}
 		}
-
-		continue
 	}
-
 }
 
 func Headers(hstr string) mail.Header {
