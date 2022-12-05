@@ -37,12 +37,22 @@ func TestParseSenderIP(t *testing.T) {
 	out.Output()
 }
 
-func TestParseEml(t *testing.T) {
-	eml, err := eml.New("testdata/2.eml")
+func TestParseMSG(t *testing.T) {
+	msg, err := msg.New("testdata/7d2e9038bb148560d795b383ddc7824b50f0916b4d2952262a1ba83a578e0453.msg")
 	if err != nil {
 		t.Fail()
 		return
 	}
 
-	eml.Format().Output()
+	msg.Format().Output()
+}
+
+func TestParseEML(t *testing.T) {
+	msg, err := eml.New("testdata/a854049f77696c2d7b4b5eee4707a9067d6fd94edd851023d3590829feccbd87.eml")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	msg.Format().Output()
 }

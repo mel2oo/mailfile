@@ -80,7 +80,7 @@ func GetSenderIP(headers mail.Header) (ip string, err error) {
 	if right-left < 7 {
 		return ip, errors.New("address not found")
 	}
-	return value[left+1 : right-1], nil
+	return value[left+1 : right], nil
 }
 
 func (m *Message) Output() {
