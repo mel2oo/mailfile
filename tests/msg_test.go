@@ -9,44 +9,78 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseMsg(t *testing.T) {
-	msg, err := msg.New("testdata/complete.msg")
-	if err != nil {
-		t.Fail()
-		return
-	}
-
-	out := msg.Format()
-	if len(out.Attachments) == 0 ||
-		len(out.Embeddeds) == 0 ||
-		len(out.SubMessage) == 0 {
-		t.Fail()
-	}
-	out.Output()
-}
-
-func TestParseSenderIP(t *testing.T) {
-	msg, err := msg.New("testdata/senderip.msg")
-	if err != nil {
-		t.Fail()
-		return
-	}
-
-	out := msg.Format()
-	if out.SenderAddress != "93.125.114.11" {
-		t.Fail()
-	}
-	out.Output()
-}
-
 func TestParseMSG1(t *testing.T) {
+	msg, err := msg.New("testdata/1b098cd4bc21836a74d12ec519bd0e8c.msg")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+	body, _ := io.ReadAll(res.Body)
+	assert.Contains(t, string(body), "From: Frances Evensen")
+	assert.Equal(t, res.SubMessage[0].Subject, "Frances Evensen shared \"SecureSave RFP\" with you.")
+	assert.Equal(t, len(res.SubMessage[0].Embeddeds), 4)
+}
+
+func TestParseMSG2(t *testing.T) {
+	msg, err := msg.New("testdata/0bb5983192375432403c74cf2d68ee67.msg")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+	html, _ := io.ReadAll(res.Html)
+	assert.Contains(t, string(html), "<html><head>\r\n<meta http-equiv=")
+	assert.Equal(t, len(res.Embeddeds), 2)
+}
+
+func TestParseMSG3(t *testing.T) {
+	msg, err := msg.New("testdata/5499732e4b2d8f6da3f053e086ee479f.msg")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+	assert.Equal(t, res.SenderAddress, "127.0.0.1")
+	assert.Equal(t, res.Attachments[0].Filename, "▶🔘─────.htm")
+}
+
+func TestParseMSG4(t *testing.T) {
+	msg, err := msg.New("testdata/7378473901a31ba720324e40d7fb1b3a.msg")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+	assert.Equal(t, res.Attachments[0].Filename, "NIT SUSPENDIDO DETALLES DIAN.pdf")
+}
+
+func TestParseMSG5(t *testing.T) {
 	msg, err := msg.New("testdata/549970122456a12d8290cea3dd9c960f.msg")
 	if err != nil {
 		t.Fail()
 		return
 	}
 
-	msg.Format().Output()
+	res := msg.Format()
+	assert.Equal(t, res.SubMessage[0].Subject, "message sent from (405)-3633914")
+	assert.Equal(t, res.SubMessage[0].Attachments[0].Filename, "SKM59469.htm")
+}
+
+func TestParseMSG6(t *testing.T) {
+	msg, err := msg.New("testdata/b9bd32895692dc99fa046b0655ef170f.msg")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+	assert.Equal(t, len(res.Attachments), 3)
+	assert.Equal(t, len(res.SubMessage), 6)
 }
 
 func TestParseEML1(t *testing.T) {
@@ -110,4 +144,30 @@ func TestParseEML4(t *testing.T) {
 	res := msg.Format()
 	assert.Equal(t, res.Attachments[0].Filename, "KYC2633.html")
 	assert.Equal(t, res.SenderAddress, "71.168.222.19")
+}
+
+func TestParseEML5(t *testing.T) {
+	msg, err := eml.New("testdata/f21fda978107a91b5b6e3f3b50f533f9.eml")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+	body, _ := io.ReadAll(res.Body)
+	html, _ := io.ReadAll(res.Html)
+	assert.Contains(t, string(body), "You recently received a")
+	assert.Contains(t, string(html), "<html xmlns:o=\"urn:schemas-")
+}
+
+func TestParseEML6(t *testing.T) {
+	msg, err := eml.New("testdata/f93a4468e029ca3c81c800c80028d9b2.eml")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+	assert.Equal(t, len(res.SubMessage[0].Headers), 3)
+	assert.Equal(t, res.SubMessage[1].Subject, "Fwd: Contract & Deposite//Revised Order")
 }

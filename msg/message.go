@@ -2,8 +2,8 @@ package msg
 
 import (
 	"bytes"
-	"io"
 	"net/mail"
+	"path/filepath"
 	"strings"
 
 	"github.com/mel2oo/mailfile"
@@ -108,12 +108,12 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 
 	body, ok := m["Body"].(string)
 	if ok {
-		msg.Body = []io.Reader{bytes.NewBuffer([]byte(body))}
+		msg.Body = bytes.NewBuffer([]byte(body))
 	}
 
 	html, ok := m["Html"].([]byte)
 	if ok {
-		msg.Html = []io.Reader{bytes.NewBuffer(html)}
+		msg.Html = bytes.NewBuffer(html)
 	}
 
 	ctxtype, ok1 := msg.Headers["Content-Type"]
@@ -134,24 +134,34 @@ func ParseAttachment(msg *mailfile.Message, datas []UnpackData) {
 			display = data.props["AttachFilename"].(string)
 		}
 
-		if len(ctxname) > 0 {
-			msg.Attachments = append(msg.Attachments, mailfile.Attachment{
-				Filename:    display,
-				ContentType: ctxtype,
-				Data:        bytes.NewBuffer(ctxdata),
-			})
-		} else if len(ctxcid) > 0 {
-			msg.Embeddeds = append(msg.Embeddeds, mailfile.Embedded{
-				CID:         ctxcid,
-				ContentType: ctxtype,
-				Data:        bytes.NewBuffer(ctxdata),
-			})
-		} else if len(data.subtag) > 0 {
-			for _, subdata := range data.subtag {
-				var msgfile mailfile.Message
-				ParseProps(&msgfile, subdata.props)
-				ParseAttachment(&msgfile, subdata.attachs)
-				msg.SubMessage = append(msg.SubMessage, &msgfile)
+		if len(ctxdata) > 0 {
+
+			if len(filepath.Ext(ctxname)) > 0 {
+				msg.Attachments = append(msg.Attachments, mailfile.Attachment{
+					Filename:    display,
+					ContentType: ctxtype,
+					Data:        bytes.NewBuffer(ctxdata),
+				})
+				continue
+			}
+
+			if len(ctxcid) > 0 {
+				msg.Embeddeds = append(msg.Embeddeds, mailfile.Embedded{
+					CID:         ctxcid,
+					ContentType: ctxtype,
+					Data:        bytes.NewBuffer(ctxdata),
+				})
+				continue
+			}
+
+		} else {
+			if len(data.subtag) > 0 {
+				for _, subdata := range data.subtag {
+					var msgfile mailfile.Message
+					ParseProps(&msgfile, subdata.props)
+					ParseAttachment(&msgfile, subdata.attachs)
+					msg.SubMessage = append(msg.SubMessage, &msgfile)
+				}
 			}
 		}
 	}

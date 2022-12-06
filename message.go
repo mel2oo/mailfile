@@ -46,8 +46,8 @@ type Message struct {
 	ContentType string `json:"content-type"`
 
 	// 邮件正文内容
-	Body []io.Reader `json:"-"`
-	Html []io.Reader `json:"-"`
+	Body io.Reader `json:"-"`
+	Html io.Reader `json:"-"`
 
 	// 邮件正文中内嵌文件
 	Embeddeds []Embedded `json:"embedded"`

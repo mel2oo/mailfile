@@ -265,9 +265,9 @@ func ParsePart(m *Message, msg *mailfile.Message) {
 			if err == nil {
 				switch mime {
 				case "text/plain":
-					msg.Body = append(msg.Body, bytes.NewBuffer(m.Body))
+					msg.Body = bytes.NewBuffer(m.Body)
 				case "text/html":
-					msg.Html = append(msg.Html, bytes.NewBuffer(m.Body))
+					msg.Html = bytes.NewBuffer(m.Body)
 				}
 			}
 		}
