@@ -171,3 +171,20 @@ func TestParseEML6(t *testing.T) {
 	assert.Equal(t, len(res.SubMessage[0].Headers), 3)
 	assert.Equal(t, res.SubMessage[1].Subject, "Fwd: Contract & Deposite//Revised Order")
 }
+
+func TestDecode(t *testing.T) {
+	// a := "=?GBK?B?1cXB+g==?="
+	a := "1cXB+g=="
+	sDec, err := base64.StdEncoding.DecodeString(a)
+	fmt.Println(string(sDec), err)
+
+	t.Log(eml.IsGBK(sDec))
+
+	d, err := eml.GbkToUtf8(sDec)
+	if err != nil {
+		t.Log(err)
+	}
+
+	t.Log(string(d))
+}
+
