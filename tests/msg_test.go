@@ -1,6 +1,8 @@
 package test
 
 import (
+	"encoding/base64"
+	"fmt"
 	"io"
 	"testing"
 
@@ -172,6 +174,23 @@ func TestParseEML6(t *testing.T) {
 	assert.Equal(t, res.SubMessage[1].Subject, "Fwd: Contract & Deposite//Revised Order")
 }
 
+func TestParseEML7(t *testing.T) {
+	msg, err := eml.New("testdata/字符编码测试.eml")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(body))
+	t.Log(res.From[0].Name)
+}
+
 func TestDecode(t *testing.T) {
 	// a := "=?GBK?B?1cXB+g==?="
 	a := "1cXB+g=="
@@ -187,4 +206,3 @@ func TestDecode(t *testing.T) {
 
 	t.Log(string(d))
 }
-
