@@ -220,6 +220,15 @@ func (m *Message) Format() *mailfile.Message {
 	msg.From, _ = mail.ParseAddressList(m.Header.From())
 	msg.ReplyTo, _ = mail.ParseAddressList(m.Header.Get("Reply-To"))
 
+	// parse msg name
+	addrs := make([]*mail.Address, 0)
+	addrs = append(append(append(addrs, msg.Sender), msg.From...), msg.ReplyTo...)
+	for i := range addrs {
+		if addrs[i] != nil && addrs[i].Name != "" {
+			addrs[i].Name, _ = DecodeBase64GBK(addrs[i].Name)
+		}
+	}
+
 	for _, tstr := range m.Header.To() {
 		to, err := mail.ParseAddress(tstr)
 		if err == nil {
@@ -256,6 +265,12 @@ func ParseParts(m *Message, msg *mailfile.Message) {
 func ParsePart(m *Message, msg *mailfile.Message) {
 	if m.SubMessage != nil {
 		msg.SubMessage = append(msg.SubMessage, m.SubMessage.Format())
+	}
+
+	if len(m.Body) > 0 && IsGBK(m.Body) {
+		if body, err := GbkToUtf8(m.Body); err == nil {
+			m.Body = body
+		}
 	}
 
 	if !m.HasParts() && m.HasBody() {
