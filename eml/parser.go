@@ -267,12 +267,6 @@ func ParsePart(m *Message, msg *mailfile.Message) {
 		msg.SubMessage = append(msg.SubMessage, m.SubMessage.Format())
 	}
 
-	if len(m.Body) > 0 && IsGBK(m.Body) {
-		if body, err := GbkToUtf8(m.Body); err == nil {
-			m.Body = body
-		}
-	}
-
 	if !m.HasParts() && m.HasBody() {
 		desc, maps, err := m.Header.ContentDisposition()
 		if err != nil {
@@ -280,8 +274,18 @@ func ParsePart(m *Message, msg *mailfile.Message) {
 			if err == nil {
 				switch mime {
 				case "text/plain":
+					if len(m.Body) > 0 && IsGBK(m.Body) {
+						if body, err := GbkToUtf8(m.Body); err == nil {
+							m.Body = body
+						}
+					}
 					msg.Body = bytes.NewBuffer(m.Body)
 				case "text/html":
+					if len(m.Body) > 0 && IsGBK(m.Body) {
+						if body, err := GbkToUtf8(m.Body); err == nil {
+							m.Body = body
+						}
+					}
 					msg.Html = bytes.NewBuffer(m.Body)
 				}
 			}
