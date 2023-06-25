@@ -3,7 +3,6 @@ package mailfile
 import (
 	"encoding/base64"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"mime/quotedprintable"
 	"regexp"
@@ -118,21 +117,15 @@ func ConvertData(data []byte, charset string) (string, error) {
 	}
 }
 
-func ParsePasswd(rhtml, rtext io.Reader) []string {
+func ParsePasswd(html, text []byte) []string {
 	pwds := make(map[string]bool)
 
-	if rhtml != nil {
-		hdata, _ := io.ReadAll(rhtml)
-		if len(hdata) > 0 {
-			ExtractPwd(TrimHTML(string(hdata)), &pwds)
-		}
+	if len(html) > 0 {
+		ExtractPwd(TrimHTML(string(html)), &pwds)
 	}
 
-	if rtext != nil {
-		tdata, _ := io.ReadAll(rtext)
-		if len(tdata) > 0 {
-			ExtractPwd(string(tdata), &pwds)
-		}
+	if len(text) > 0 {
+		ExtractPwd(string(text), &pwds)
 	}
 
 	res := make([]string, 0)

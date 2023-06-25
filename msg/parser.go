@@ -1,6 +1,8 @@
 package msg
 
 import (
+	"bytes"
+	"io/ioutil"
 	"os"
 
 	"github.com/mel2oo/mailfile"
@@ -29,6 +31,12 @@ func (s *Stream) Format() *mailfile.Message {
 
 	ParseProps(msg, s.UnpackData.props)
 	ParseAttachment(msg, s.UnpackData.attachs)
-	msg.Pwd = mailfile.ParsePasswd(msg.Html, msg.Body)
+
+	hdata, _ := ioutil.ReadAll(msg.Html)
+	tdata, _ := ioutil.ReadAll(msg.Body)
+
+	msg.Html = bytes.NewBuffer(hdata)
+	msg.Body = bytes.NewBuffer(tdata)
+	msg.Pwd = mailfile.ParsePasswd(hdata, tdata)
 	return msg
 }
