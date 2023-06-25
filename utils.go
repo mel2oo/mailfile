@@ -3,15 +3,18 @@ package mailfile
 import (
 	"encoding/base64"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"mime/quotedprintable"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/axgle/mahonia"
 	"github.com/djimenez/iconv-go"
 )
 
-//解析 带有 =?utf-8?B?bWxlbW9z?= 格式字符串
+// 解析 带有 =?utf-8?B?bWxlbW9z?= 格式字符串
 func ParseContext(data string) string {
 	bindex := strings.Index(data, "=?")
 	if bindex == -1 {
@@ -112,5 +115,97 @@ func ConvertData(data []byte, charset string) (string, error) {
 		_, cdata, err := decoder2.Translate([]byte(
 			decoder1.ConvertString(string(data))), true)
 		return string(cdata), err
+	}
+}
+
+func ParsePasswd(rhtml, rtext io.Reader) []string {
+	pwds := make(map[string]bool)
+
+	if rhtml != nil {
+		hdata, _ := io.ReadAll(rhtml)
+		if len(hdata) > 0 {
+			ExtractPwd(TrimHTML(string(hdata)), &pwds)
+		}
+	}
+
+	if rtext != nil {
+		tdata, _ := io.ReadAll(rtext)
+		if len(tdata) > 0 {
+			ExtractPwd(string(tdata), &pwds)
+		}
+	}
+
+	res := make([]string, 0)
+	for pwd := range pwds {
+		if len(pwd) > 0 {
+			res = append(res, pwd)
+		}
+	}
+	return res
+}
+
+var (
+	expHtml    = regexp.MustCompile(`<[\s\S]*?>`)
+	expUnicode = regexp.MustCompile(`&#\d+;`)
+	expPasswd  = regexp.MustCompile(`[0-9a-zA-Z$&+,:;=?@#|'<>.-^*()%!]{3,20}`)
+
+	keys = []string{
+		"password",
+		"passwd",
+		"密码",
+		"パスワード",
+		"Пароль ",
+		"Pasvorto",
+		"Mot de passe",
+		"Passwort",
+		"Contraseña",
+		"कूटसङ्केतः",
+		"암호",
+	}
+)
+
+func TrimHTML(data string) string {
+	txt := expHtml.ReplaceAllString(data, "")
+	txt = strings.ReplaceAll(txt, "&nbsp;", " ")
+	unicode := expUnicode.FindAllString(txt, -1)
+	filter := make(map[string]bool)
+
+	for _, code := range unicode {
+		if _, has := filter[code]; has {
+			continue
+		}
+		filter[code] = true
+		val, err := strconv.ParseInt(code[2:len(code)-1], 10, 0)
+		if err != nil {
+			continue
+		}
+		txt = strings.ReplaceAll(txt, code, string(rune(val)))
+	}
+	return txt
+}
+
+func ExtractPwd(data string, filter *map[string]bool) {
+	var (
+		tdata  string
+		lowstr = strings.ToLower(data)
+	)
+
+	for _, key := range keys {
+		lowkey := strings.ToLower(key)
+		index := 0
+		tdata = lowstr[index:]
+		for find_index := strings.Index(tdata, lowkey); find_index != -1; find_index = strings.Index(tdata, lowkey) {
+			index = index + find_index + len(lowkey)
+			if index > len(lowstr) {
+				break
+			}
+
+			pw := expPasswd.FindStringIndex(data[index:])
+			if len(pw) > 1 {
+				(*filter)[data[index:][pw[0]:pw[1]]] = true
+			}
+
+			tdata = lowstr[index:]
+		}
 	}
 }

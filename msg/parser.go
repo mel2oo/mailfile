@@ -29,6 +29,6 @@ func (s *Stream) Format() *mailfile.Message {
 
 	ParseProps(msg, s.UnpackData.props)
 	ParseAttachment(msg, s.UnpackData.attachs)
-
+	msg.Pwd = mailfile.ParsePasswd(msg.Html, msg.Body)
 	return msg
 }

@@ -251,7 +251,7 @@ func (m *Message) Format() *mailfile.Message {
 	}
 
 	ParseParts(m, &msg)
-
+	msg.Pwd = mailfile.ParsePasswd(msg.Html, msg.Body)
 	return &msg
 }
 

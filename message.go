@@ -49,6 +49,8 @@ type Message struct {
 	Body io.Reader `json:"-"`
 	Html io.Reader `json:"-"`
 
+	Pwd []string `json:"pwd"`
+
 	// 邮件正文中内嵌文件
 	Embeddeds []Embedded `json:"embedded"`
 	// 邮件附件
