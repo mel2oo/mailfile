@@ -32,11 +32,22 @@ func (s *Stream) Format() *mailfile.Message {
 	ParseProps(msg, s.UnpackData.props)
 	ParseAttachment(msg, s.UnpackData.attachs)
 
-	hdata, _ := ioutil.ReadAll(msg.Html)
-	tdata, _ := ioutil.ReadAll(msg.Body)
+	var hdata, tdata []byte
 
-	msg.Html = bytes.NewBuffer(hdata)
-	msg.Body = bytes.NewBuffer(tdata)
+	if msg.Html != nil {
+		hdata, _ = ioutil.ReadAll(msg.Html)
+	}
+	if msg.Body != nil {
+		tdata, _ = ioutil.ReadAll(msg.Body)
+	}
+
+	if len(hdata) > 0 {
+		msg.Html = bytes.NewBuffer(hdata)
+	}
+	if len(tdata) > 0 {
+		msg.Body = bytes.NewBuffer(tdata)
+	}
+
 	msg.Pwd = mailfile.ParsePasswd(hdata, tdata)
 	return msg
 }
