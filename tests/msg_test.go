@@ -4,6 +4,8 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"io/fs"
+	"path/filepath"
 	"testing"
 
 	"github.com/mel2oo/mailfile/eml"
@@ -192,7 +194,6 @@ func TestParseEML7(t *testing.T) {
 }
 
 func TestDecode(t *testing.T) {
-	// a := "=?GBK?B?1cXB+g==?="
 	a := "1cXB+g=="
 	sDec, err := base64.StdEncoding.DecodeString(a)
 	fmt.Println(string(sDec), err)
@@ -205,4 +206,47 @@ func TestDecode(t *testing.T) {
 	}
 
 	t.Log(string(d))
+}
+
+func TestDecodeAllPasswd(t *testing.T) {
+	filepath.Walk("passwd", func(path string, info fs.FileInfo, _ error) error {
+		if info.IsDir() {
+			return nil
+		}
+
+		msg, err := eml.New(path)
+		if err != nil {
+			t.Fail()
+			return nil
+		}
+
+		res := msg.Format()
+
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		fmt.Printf("file: %s\n", path)
+		fmt.Printf("body: %s\n", string(body))
+		fmt.Printf("password: %v\n", res.Pwd)
+		fmt.Printf("------------------------------------------------\n")
+		return nil
+	})
+}
+func TestDecodeOnePasswd(t *testing.T) {
+	msg, err := eml.New("passwd/2看看密码是多少.eml")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(body))
+	t.Log(res.From[0].Name)
+
 }
