@@ -147,6 +147,7 @@ var (
 		"password",
 		"passwd",
 		"密码",
+		"秘密",
 		"パスワード",
 		"Пароль ",
 		"Pasvorto",

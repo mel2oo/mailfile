@@ -235,7 +235,7 @@ func TestDecodeAllPasswd(t *testing.T) {
 	})
 }
 func TestDecodeOnePasswd(t *testing.T) {
-	msg, err := eml.New("passwd/2看看密码是多少.eml")
+	msg, err := eml.New("passwd/11e6a2ed92159455ce164ab761ac8dc1.pwd.eml.bin")
 	if err != nil {
 		t.Fail()
 		return
@@ -244,9 +244,11 @@ func TestDecodeOnePasswd(t *testing.T) {
 	res := msg.Format()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatal()
+		return
 	}
-	t.Log(string(body))
-	t.Log(res.From[0].Name)
 
+	fmt.Printf("body: %s\n", string(body))
+	fmt.Printf("password: %v\n", res.Pwd)
+	fmt.Printf("------------------------------------------------\n")
 }
