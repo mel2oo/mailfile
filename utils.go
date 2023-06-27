@@ -227,10 +227,14 @@ func ExtractPwd(data string, filter *map[string]bool) {
 			if index > len(lowstr) {
 				break
 			}
-			// pw := expPasswd.FindStringIndex(data[index:])
-			pw := expPasswdUTF8.FindStringIndex(data[index:])
+			pw := expPasswd.FindStringIndex(data[index:])
 			if len(pw) > 1 {
 				(*filter)[data[index:][pw[0]:pw[1]]] = true
+			} else {
+				pw = expPasswdUTF8.FindStringIndex(data[index:])
+				if len(pw) > 1 {
+					(*filter)[data[index:][pw[0]:pw[1]]] = true
+				}
 			}
 
 			tdata = lowstr[index:]

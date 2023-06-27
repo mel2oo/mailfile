@@ -231,8 +231,9 @@ func TestDecodeAllPasswd(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		t.Log(string(body))
-		t.Log(res.From[0].Name)
+		fmt.Println(string(body))
+		fmt.Println(res.From[0].Name)
+		fmt.Printf("password:%v\n-----password-----\n", res.Pwd)
 		return nil
 	})
 }
