@@ -4,6 +4,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"io/fs"
+	"path/filepath"
+	"regexp"
 	"testing"
 
 	"github.com/mel2oo/mailfile/eml"
@@ -205,4 +208,50 @@ func TestDecode(t *testing.T) {
 	}
 
 	t.Log(string(d))
+}
+
+func TestDecodeAllPasswd(t *testing.T) {
+	// a := "=?GBK?B?1cXB+g==?="
+
+	filepath.Walk("passwd", func(path string, info fs.FileInfo, err error) error {
+
+		if info.IsDir() {
+			return nil
+		}
+		fmt.Printf("fileapth:%s\n", path)
+		msg, err := eml.New(path)
+		if err != nil {
+			t.Fail()
+			return nil
+		}
+
+		res := msg.Format()
+
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Log(string(body))
+		t.Log(res.From[0].Name)
+		return nil
+	})
+}
+func TestDecodeOnePasswd(t *testing.T) {
+	// a := "=?GBK?B?1cXB+g==?="
+
+	msg, _ := eml.New("passwd/2看看密码是多少.eml")
+
+	res := msg.Format()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(body))
+	t.Log(res.From[0].Name)
+
+}
+func TestReg(t *testing.T) {
+	var expPasswdUTF8 = regexp.MustCompile("[\u4e00-\u9fa5]{2,20}")
+	fmt.Printf("match:%v", expPasswdUTF8.MatchString("中文测试"))
 }

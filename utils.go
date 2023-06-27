@@ -140,9 +140,10 @@ func ParsePasswd(html, text []byte) []string {
 var (
 	expHtml    = regexp.MustCompile(`<[\s\S]*?>`)
 	expUnicode = regexp.MustCompile(`&#\d+;`)
-	expPasswd  = regexp.MustCompile(`[0-9a-zA-Z$&+,:;=?@#|'<>.-^*()%!]{3,20}`)
+	expPasswd  = regexp.MustCompile(`[0-9a-zA-Z$&+,:;=?@#|'<>.-^*()%!][0-9a-zA-Z$&+,:;=?@#|'<>.-^*()%! ]{2,20}`)
 
-	keys = []string{
+	expPasswdUTF8 = regexp.MustCompile("[\u4e00-\u9fa50-9a-zA-Z$&+,:;=?@#|'<>.-^*()%!][\u4e00-\u9fa50-9a-zA-Z$&+,:;=?@#|'<>.-^*()%! ]{2,20}")
+	keys          = []string{
 		"password",
 		"passwd",
 		"密码",
@@ -155,6 +156,7 @@ var (
 		"कूटसङ्केतः",
 		"암호",
 	}
+	_ = expPasswd
 )
 
 func TrimHTML(data string) string {
@@ -177,6 +179,39 @@ func TrimHTML(data string) string {
 	return txt
 }
 
+// rune占用大小
+func GetRuneLenth(org rune) int {
+	if org < 128 {
+		return 1
+	} else if org < 2048 {
+		return 2
+	} else if org < 65536 {
+		return 3
+	} else {
+		return 4
+	}
+}
+
+// 获取关键词最后一个字符串所在位置 当前关键词没有那种papasswd类型 可以不考虑kmp算法 之后存在可以考虑加上
+func FindStrLastIndex(source, key string) int {
+
+	key_index := 0
+	keys := []rune(key)
+	for k, v := range source {
+		if v == keys[key_index] {
+			key_index++
+			if key_index == len(keys) {
+				return k + GetRuneLenth(v)
+			}
+		} else if v == ' ' || v == '\t' || v == '\n' {
+			continue
+		} else {
+			key_index = 0
+		}
+	}
+	return -1
+}
+
 func ExtractPwd(data string, filter *map[string]bool) {
 	var (
 		tdata  string
@@ -187,13 +222,13 @@ func ExtractPwd(data string, filter *map[string]bool) {
 		lowkey := strings.ToLower(key)
 		index := 0
 		tdata = lowstr[index:]
-		for find_index := strings.Index(tdata, lowkey); find_index != -1; find_index = strings.Index(tdata, lowkey) {
-			index = index + find_index + len(lowkey)
+		for find_index := FindStrLastIndex(tdata, lowkey); find_index != -1; find_index = FindStrLastIndex(tdata, lowkey) {
+			index = index + find_index
 			if index > len(lowstr) {
 				break
 			}
-
-			pw := expPasswd.FindStringIndex(data[index:])
+			// pw := expPasswd.FindStringIndex(data[index:])
+			pw := expPasswdUTF8.FindStringIndex(data[index:])
 			if len(pw) > 1 {
 				(*filter)[data[index:][pw[0]:pw[1]]] = true
 			}
