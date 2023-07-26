@@ -32,7 +32,7 @@ func ParseContext(data string) string {
 	prefix := data[:bindex]
 	decode := ParseTitle(data[bindex : bindex+eindex+2])
 	suffix := ParseContext(data[bindex+eindex+2:])
-	return prefix + decode + suffix
+	return strings.TrimSpace(prefix) + strings.TrimSpace(decode) + strings.TrimSpace(suffix)
 }
 
 func ParseTitle(subject string) string {
