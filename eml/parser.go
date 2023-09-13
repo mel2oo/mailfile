@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"io"
-	"io/ioutil"
 	"mime"
 	"mime/multipart"
 	"mime/quotedprintable"
@@ -84,7 +83,7 @@ func parseMessageWithHeader(headers Header, bodyReader io.Reader) (*Message, err
 		subMessage, err = ParseMessage(bufferedReader)
 
 	} else {
-		body, err = ioutil.ReadAll(bufferedReader)
+		body, err = io.ReadAll(bufferedReader)
 	}
 	if err != nil {
 		return nil, err
@@ -122,7 +121,7 @@ func readParts(bodyReader io.Reader, boundary string) ([]*Message, error) {
 
 // readEpilogue ...
 func readEpilogue(r io.Reader) ([]byte, error) {
-	epilogue, err := ioutil.ReadAll(r)
+	epilogue, err := io.ReadAll(r)
 	for len(epilogue) > 0 && isASCIISpace(epilogue[len(epilogue)-1]) {
 		epilogue = epilogue[:len(epilogue)-1]
 	}
@@ -134,7 +133,7 @@ func readEpilogue(r io.Reader) ([]byte, error) {
 
 // readPreamble ...
 func readPreamble(r *bufio.Reader, boundary string) ([]byte, error) {
-	preamble, err := ioutil.ReadAll(&preambleReader{r: r, boundary: []byte("--" + boundary)})
+	preamble, err := io.ReadAll(&preambleReader{r: r, boundary: []byte("--" + boundary)})
 	if len(preamble) > 0 {
 		return preamble, err
 	}
@@ -255,10 +254,10 @@ func (m *Message) Format() *mailfile.Message {
 	var hdata, tdata []byte
 
 	if msg.Html != nil {
-		hdata, _ = ioutil.ReadAll(msg.Html)
+		hdata, _ = io.ReadAll(msg.Html)
 	}
 	if msg.Body != nil {
-		tdata, _ = ioutil.ReadAll(msg.Body)
+		tdata, _ = io.ReadAll(msg.Body)
 	}
 
 	if len(hdata) > 0 {

@@ -3,7 +3,7 @@ package mailfile
 import (
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mime/quotedprintable"
 	"regexp"
 	"strconv"
@@ -36,6 +36,16 @@ func ParseContext(data string) string {
 }
 
 func ParseTitle(subject string) string {
+	if strings.Count(subject, "?=") > 1 { // 有多个 =?[]?[]?[]?= 格式字符串
+		var r strings.Builder
+		subjects := strings.Split(subject, " ")
+		for _, s := range subjects {
+			s = ParseTitle(strings.TrimSpace(s))
+			r.WriteString(s)
+		}
+		return r.String()
+	}
+
 	if !strings.HasPrefix(subject, "=?") {
 		return subject
 	}
@@ -65,13 +75,6 @@ func ParseTitle(subject string) string {
 		return retstr
 	}
 
-	if strings.ToLower(lists[0]) == "gb2312" {
-		data, err := iconv.ConvertString(string(texts), "gb2312", "utf-8")
-		if err != nil {
-			return subject
-		}
-		return data
-	}
 	return subject
 }
 
@@ -84,7 +87,7 @@ func DecodeString(str string, etype string) ([]byte, error) {
 	case "quoted-printable":
 		reader := strings.NewReader(str)
 		decode := quotedprintable.NewReader(reader)
-		return ioutil.ReadAll(decode)
+		return io.ReadAll(decode)
 	default:
 		return nil, fmt.Errorf("unkown encode format %s", etype)
 	}
