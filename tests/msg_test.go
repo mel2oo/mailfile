@@ -235,7 +235,7 @@ func TestDecodeAllPasswd(t *testing.T) {
 	})
 }
 func TestDecodeOnePasswd(t *testing.T) {
-	msg, err := eml.New("passwd/11e6a2ed92159455ce164ab761ac8dc1.pwd.eml.bin")
+	msg, err := eml.New("passwd/test1.eml")
 	if err != nil {
 		t.Fail()
 		return
