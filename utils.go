@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"mime/quotedprintable"
+	"net/mail"
 	"regexp"
 	"strconv"
 	"strings"
@@ -33,6 +34,20 @@ func ParseContext(data string) string {
 	decode := ParseTitle(data[bindex : bindex+eindex+2])
 	suffix := ParseContext(data[bindex+eindex+2:])
 	return strings.TrimSpace(prefix) + strings.TrimSpace(decode) + strings.TrimSpace(suffix)
+}
+
+func ParseFrom(from string) ([]*mail.Address, error) {
+	if !strings.HasPrefix(from, "=?") {
+		return mail.ParseAddressList(from)
+	}
+	idx := strings.LastIndex(from, "?=")
+	if idx == -1 {
+		return mail.ParseAddressList(from)
+	}
+
+	name := ParseTitle(from[:idx+2])
+	from = name + from[idx+2:]
+	return mail.ParseAddressList(from)
 }
 
 func ParseTitle(subject string) string {

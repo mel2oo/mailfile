@@ -216,7 +216,7 @@ func (m *Message) Format() *mailfile.Message {
 
 	msg.SenderAddress, _ = mailfile.GetSenderIP(msg.Headers)
 	msg.Sender, _ = mail.ParseAddress(m.Header.Get("Sender"))
-	msg.From, _ = mail.ParseAddressList(m.Header.From())
+	msg.From, _ = mailfile.ParseFrom(m.Header.From())
 	msg.ReplyTo, _ = mail.ParseAddressList(m.Header.Get("Reply-To"))
 
 	// parse msg name
