@@ -224,6 +224,9 @@ func FindStrLastIndex(source, key string) int {
 			}
 		} else if v == ' ' || v == '\t' || v == '\n' {
 			continue
+		} else if v == keys[0] {
+			key_index = 1
+			continue
 		} else {
 			key_index = 0
 		}
