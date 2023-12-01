@@ -149,7 +149,7 @@ func ParsePasswd(html, text []byte) []string {
 	res := make([]string, 0)
 	for pwd := range pwds {
 		pwd = strings.TrimSpace(pwd)
-		if len(pwd) > 0 {
+		if len(pwd) > 3 {
 			res = append(res, pwd)
 		}
 	}
