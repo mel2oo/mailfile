@@ -155,7 +155,11 @@ func (m *msoxstream) unpack() MetaData {
 func (m *msoxstream) PropsNameType(entry *mscfb.File) (property_name, property_type string) {
 	if strings.Contains(entry.Name, "__substg1.0_") {
 		namid := "0x" + strings.ReplaceAll(entry.Name, "__substg1.0_", "")[0:4]
+		property_type = "0x" + strings.ReplaceAll(entry.Name, "__substg1.0_", "")[0:4]
 		props := PROPS_ID_MAP[namid]
+		if property_type != "0x0000" {
+			return props["name"], property_type
+		}
 		return props["name"], props["data_type"]
 	}
 

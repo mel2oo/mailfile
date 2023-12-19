@@ -1,7 +1,12 @@
 package msg
 
 import (
+	"bytes"
+	"io"
 	"math"
+
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 )
 
 // https://learn.microsoft.com/en-us/openspecs/exchange_server_protocols/ms-oxcdata/0c77892e-288e-435a-9c49-be1c20c7afdb
@@ -169,7 +174,14 @@ func PtypInteger64(data []byte) uint64 {
 // a string of multibyte characters in externally specified encoding with terminating null character (single 0 byte).
 func PtypString8(data []byte) string {
 	if len(data) > 0 {
-		return string(Trim(data))
+
+		reader := transform.NewReader(bytes.NewReader(data), simplifiedchinese.GB18030.NewDecoder())
+
+		utf8Data, err := io.ReadAll(reader)
+		if err != nil {
+			return string(Trim(data))
+		}
+		return string(Trim(utf8Data))
 	}
 	return string(data)
 }
