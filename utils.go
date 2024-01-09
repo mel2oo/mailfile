@@ -159,8 +159,8 @@ func ParsePasswd(html, text []byte) []string {
 var (
 	expHtml       = regexp.MustCompile(`<[\s\S]*?>`)
 	expUnicode    = regexp.MustCompile(`&#\d+;`)
-	expPasswd     = regexp.MustCompile(`[0-9a-zA-Z$&+,:;=?@#|'<>.-^*()%!][0-9a-zA-Z$&+,:;=?@#|'<>.-^*()%! ]{2,20}`)
-	expPasswdUTF8 = regexp.MustCompile("[\u4e00-\u9fa50-9a-zA-Z$&+,:;=?@#|'<>.-^*()%!][\u4e00-\u9fa50-9a-zA-Z$&+,:;=?@#|'<>.-^*()%! ]{2,20}")
+	expPasswd     = regexp.MustCompile(`[0-9a-zA-Z~$&+,:;=?@#|'<>.-^*()%!][0-9a-zA-Z~$&+,:;=?@#|'<>.-^*()%! ]{2,20}`)
+	expPasswdUTF8 = regexp.MustCompile("[\u4e00-\u9fa50-9a-zA-Z~$&+,:;=?@#|'<>.-^*()%!][\u4e00-\u9fa50-9a-zA-Z~$&+,:;=?@#|'<>.-^*()%! ]{2,20}")
 
 	keys = []string{
 		"password",
@@ -200,40 +200,86 @@ func TrimHTML(data string) string {
 	return txt
 }
 
-func GetRuneLenth(org rune) int {
-	if org < 128 {
-		return 1
-	} else if org < 2048 {
-		return 2
-	} else if org < 65536 {
-		return 3
-	} else {
-		return 4
+// rune占用大小
+// func GetRuneLenth(org rune) int {
+// 	if org < 128 {
+// 		return 1
+// 	} else if org < 2048 {
+// 		return 2
+// 	} else if org < 65536 {
+// 		return 3
+// 	} else {
+// 		return 4
+// 	}
+// }
+
+// 获取关键词最后一个字符串所在位置 当前关键词没有那种papasswd类型 可以不考虑kmp算法 之后存在可以考虑加上
+// func FindStrLastIndex(source, key string) int {
+
+// 	key_index := 0
+// 	keys := []rune(key)
+// 	for k, v := range []rune(source) {
+// 		if v == keys[key_index] {
+// 			key_index++
+// 			if key_index == len(keys) {
+// 				return k + GetRuneLenth(v)
+// 			}
+// 		} else if v == ' ' || v == '\t' || v == '\n' {
+// 			continue
+// 		} else {
+// 			key_index = 0
+// 		}
+// 	}
+// 	return -1
+// }
+
+// 字符串匹配
+func SundaySearch(haystack string, needle string) int {
+	if len(needle) == 0 {
+		return 0
 	}
-}
 
-func FindStrLastIndex(source, key string) int {
+	if len(haystack) == 0 && len(needle) != 0 {
+		return -1
+	}
 
-	key_index := 0
-	keys := []rune(key)
-	for k, v := range source {
-		if v == keys[key_index] {
-			key_index++
-			if key_index == len(keys) {
-				return k + GetRuneLenth(v)
+	sIndex := 0
+	pIndex := 0
+	space := 0
+
+	keys := make([]int, 256) //记录每个字符出现的最右侧位置
+
+	for i := 0; i < 256; i++ {
+		keys[i] = -1
+	}
+
+	for i := 0; i < len(needle); i++ {
+		keys[needle[i]] = i
+	}
+
+	for sIndex < len(haystack) {
+		if haystack[sIndex] == needle[pIndex] {
+			sIndex++
+			pIndex++
+			if pIndex == len(needle) {
+				return sIndex
 			}
-		} else if v == ' ' || v == '\t' || v == '\n' {
-			continue
-		} else if v == keys[0] {
-			key_index = 1
+		} else if haystack[sIndex] == ' ' || haystack[sIndex] == '\t' || haystack[sIndex] == '\n' {
+			sIndex++
 			continue
 		} else {
-			key_index = 0
+			pIndex = 0
+			if space+len(needle) < len(haystack) {
+				space += len(needle) - keys[haystack[space+len(needle)]] //寻找下个模式串匹配的初始位置
+			} else { //位移与模式串的长度和超出原字符串的长度
+				return -1
+			}
+			sIndex = space
 		}
 	}
+
 	return -1
 }
-
 func ExtractPwd(data string, filter *map[string]bool) {
 	var (
 		tdata  string
@@ -244,7 +290,7 @@ func ExtractPwd(data string, filter *map[string]bool) {
 		lowkey := strings.ToLower(key)
 		index := 0
 		tdata = lowstr[index:]
-		for find_index := FindStrLastIndex(tdata, lowkey); find_index != -1; find_index = FindStrLastIndex(tdata, lowkey) {
+		for find_index := SundaySearch(tdata, lowkey); find_index != -1; find_index = SundaySearch(tdata, lowkey) {
 			index = index + find_index
 			if index > len(lowstr) {
 				break
