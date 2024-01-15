@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/base64"
+	"html"
 	"io"
 	"mime"
 	"mime/multipart"
@@ -255,7 +256,9 @@ func (m *Message) Format() *mailfile.Message {
 
 	if msg.Html != nil {
 		hdata, _ = io.ReadAll(msg.Html)
+		hdata = []byte(html.UnescapeString(string(hdata)))
 	}
+
 	if msg.Body != nil {
 		tdata, _ = io.ReadAll(msg.Body)
 	}
@@ -265,6 +268,8 @@ func (m *Message) Format() *mailfile.Message {
 	}
 	if len(tdata) > 0 {
 		msg.Body = bytes.NewBuffer(tdata)
+	} else {
+		msg.Body = msg.Html
 	}
 
 	msg.Pwd = mailfile.ParsePasswd(hdata, tdata)

@@ -7,7 +7,6 @@ import (
 	"mime/quotedprintable"
 	"net/mail"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/axgle/mahonia"
@@ -157,8 +156,10 @@ func ParsePasswd(html, text []byte) []string {
 }
 
 var (
-	expHtml       = regexp.MustCompile(`<[\s\S]*?>`)
-	expUnicode    = regexp.MustCompile(`&#\d+;`)
+	expHtml = regexp.MustCompile(`<[\s\S]*?>`)
+	// ExpUnicode    = regexp.MustCompile(`&#\d+;`)
+	// ExpUnicodeHex = regexp.MustCompile(`&#x\s+;`)
+
 	expPasswd     = regexp.MustCompile(`[0-9a-zA-Z~$&+,:;=?@#|'<>.-^*()%!][0-9a-zA-Z~$&+,:;=?@#|'<>.-^*()%! ]{2,20}`)
 	expPasswdUTF8 = regexp.MustCompile("[\u4e00-\u9fa50-9a-zA-Z~$&+,:;=?@#|'<>.-^*()%!][\u4e00-\u9fa50-9a-zA-Z~$&+,:;=?@#|'<>.-^*()%! ]{2,20}")
 
@@ -181,22 +182,24 @@ var (
 )
 
 func TrimHTML(data string) string {
-	txt := expHtml.ReplaceAllString(data, "")
-	txt = strings.ReplaceAll(txt, "&nbsp;", " ")
-	unicode := expUnicode.FindAllString(txt, -1)
-	filter := make(map[string]bool)
 
-	for _, code := range unicode {
-		if _, has := filter[code]; has {
-			continue
-		}
-		filter[code] = true
-		val, err := strconv.ParseInt(code[2:len(code)-1], 10, 0)
-		if err != nil {
-			continue
-		}
-		txt = strings.ReplaceAll(txt, code, string(rune(val)))
-	}
+	txt := expHtml.ReplaceAllString(data, "")
+
+	// unicode := expUnicode.FindAllString(txt, -1)
+	// unicodeHex := expUnicodeHex.FindAllString(txt, -1)
+	// filter := make(map[string]bool)
+
+	// for _, code := range unicode {
+	// 	if _, has := filter[code]; has {
+	// 		continue
+	// 	}
+	// 	filter[code] = true
+	// 	val, err := strconv.ParseInt(code[2:len(code)-1], 10, 0)
+	// 	if err != nil {
+	// 		continue
+	// 	}
+	// 	txt = strings.ReplaceAll(txt, code, string(rune(val)))
+	// }
 	return txt
 }
 

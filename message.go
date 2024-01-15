@@ -76,6 +76,16 @@ func GetSenderIP(headers mail.Header) (ip string, err error) {
 	if !ok || len(list) == 0 {
 		return ip, errors.New("received not found")
 	}
+	// var iplist []string
+	// for index := len(list) - 1; index >= 0; index-- {
+	// 	value := list[len(list)-1]
+	// 	left := strings.Index(value, "[")
+	// 	right := strings.Index(value, "]")
+	// 	if right-left < 7 {
+	// 		continue
+	// 	}
+	// 	iplist = append(iplist, value[left+1:right])
+	// }
 
 	value := list[len(list)-1]
 	left := strings.Index(value, "[")
