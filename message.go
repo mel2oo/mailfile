@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/mail"
-	"strings"
+	"regexp"
 )
 
 type Message struct {
@@ -71,6 +71,8 @@ type Embedded struct {
 	Data        io.Reader `json:"-"`
 }
 
+var ipRegex = regexp.MustCompile(`(?:\d{1,3}\.){3}\d{1,3}`)
+
 func GetSenderIP(headers mail.Header) (ip string, err error) {
 	list, ok := headers["Received"]
 	if !ok || len(list) == 0 {
@@ -88,12 +90,12 @@ func GetSenderIP(headers mail.Header) (ip string, err error) {
 	// }
 
 	value := list[len(list)-1]
-	left := strings.Index(value, "[")
-	right := strings.Index(value, "]")
-	if right-left < 7 {
+	IpList := ipRegex.FindAllString(value, -1)
+
+	if len(IpList) == 0 {
 		return ip, errors.New("address not found")
 	}
-	return value[left+1 : right], nil
+	return IpList[0], nil
 }
 
 func (m *Message) Output() {
