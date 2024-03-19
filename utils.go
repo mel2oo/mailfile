@@ -50,13 +50,14 @@ func ParseFrom(from string) ([]*mail.Address, error) {
 }
 
 func ParseTitle(subject string) string {
-	if strings.Count(subject, "?=") > 1 { // 有多个 =?[]?[]?[]?= 格式字符串
+	if strings.Count(subject, "?=") > 1 && len(strings.Split(subject, " ")) > 1 { // 有多个 =?[]?[]?[]?= 格式字符串
 		var r strings.Builder
 		subjects := strings.Split(subject, " ")
 		for _, s := range subjects {
 			s = ParseTitle(strings.TrimSpace(s))
 			r.WriteString(s)
 		}
+
 		return r.String()
 	}
 
