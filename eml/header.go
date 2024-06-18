@@ -9,6 +9,8 @@ import (
 	"net/textproto"
 	"strings"
 	"time"
+
+	"github.com/mel2oo/mailfile"
 )
 
 const (
@@ -160,6 +162,7 @@ func (h Header) ContentDisposition() (string, map[string]string, error) {
 // parseMediaType ...
 func (h Header) parseMediaType(typeField string) (string, map[string]string, error) {
 	if content := h.Get(typeField); len(content) > 0 {
+		content = mailfile.ParseContext(content)
 		mediaType, mediaTypeParams, err := mime.ParseMediaType(content)
 		if err != nil {
 			return "", map[string]string{}, err

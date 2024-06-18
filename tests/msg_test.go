@@ -192,6 +192,22 @@ func TestParseEML7(t *testing.T) {
 	t.Log(string(body))
 	t.Log(res.From[0].Name)
 }
+func TestParseEML8(t *testing.T) {
+	msg, err := eml.New("testdata/0a0a8c43b52158c3adea255c4d230baecbd2762ca96cc5055b33088fb0888cd2_具体通知文档指引资料文件.dot.zip.eml")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(body))
+	t.Log(res.From[0].Name)
+}
 
 func TestDecode(t *testing.T) {
 	a := "1cXB+g=="
