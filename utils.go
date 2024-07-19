@@ -299,8 +299,16 @@ func ExtractPwd(data string, filter *map[string]bool) {
 			if index > len(lowstr) {
 				break
 			}
+			if strings.HasPrefix(data[index:], "路径") {
+				tdata = lowstr[index:]
+				continue
+			}
 			pw := expPasswd.FindStringIndex(data[index:])
 			if len(pw) > 1 {
+				if pw[0] > 20 {
+					tdata = lowstr[index:]
+					continue
+				}
 				pwd := data[index:][pw[0]:pw[1]]
 				pwd = strings.TrimPrefix(pwd, ":")
 				(*filter)[strings.TrimSpace(pwd)] = true
