@@ -123,6 +123,7 @@ func ParseProps(msg *mailfile.Message, m MetaData) {
 }
 
 func ParseAttachment(msg *mailfile.Message, datas []UnpackData) {
+	var has bool
 	for _, data := range datas {
 
 		ctxdata, _ := data.props["AttachDataObject"].([]uint8)
@@ -131,7 +132,10 @@ func ParseAttachment(msg *mailfile.Message, datas []UnpackData) {
 		display, _ := data.props["DisplayName"].(string)
 		ctxcid, _ := data.props["AttachContentId"].(string)
 		if len(display) == 0 {
-			display = data.props["AttachFilename"].(string)
+			display, has = data.props["AttachFilename"].(string)
+			if !has {
+				continue
+			}
 		}
 
 		if len(ctxdata) > 0 {

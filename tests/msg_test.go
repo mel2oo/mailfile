@@ -86,6 +86,17 @@ func TestParseMSG6(t *testing.T) {
 	assert.Equal(t, len(res.Attachments), 3)
 	assert.Equal(t, len(res.SubMessage), 6)
 }
+func TestParseMSG7(t *testing.T) {
+	msg, err := msg.New("testdata/e804dc56099599fd42868b88982e14ed7f0eb02c648fc4db828b7729901a49ea.msg")
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	res := msg.Format()
+	assert.Equal(t, len(res.Attachments), 0)
+	assert.Equal(t, len(res.SubMessage), 0)
+}
 
 func TestParseEML1(t *testing.T) {
 	msg, err := eml.New("testdata/476ae97d5536c2712f455f633c0c1ff7.eml")
