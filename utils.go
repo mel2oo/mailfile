@@ -64,7 +64,9 @@ func ParseTitle(subject string) string {
 	if !strings.HasPrefix(subject, "=?") {
 		return subject
 	}
-
+	if len(subject)-2 <= 2 {
+		return subject
+	}
 	title := subject[2 : len(subject)-2]
 	lists := strings.SplitN(title, "?", 3)
 	if len(lists) != 3 {
